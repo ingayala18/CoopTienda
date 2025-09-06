@@ -1,4 +1,4 @@
-namespace CoopTienda.Models
+namespace CoopTienda.Modelo.Models
 {
     public class ErrorViewModel
     {

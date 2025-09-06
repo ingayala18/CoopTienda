@@ -1,9 +1,10 @@
 using System.Diagnostics;
-using CoopTienda.Models;
+using CoopTienda.Modelo.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CoopTienda.Controllers
+namespace CoopTienda.Areas.Inventario.Controllers
 {
+    [Area("Inventario")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
