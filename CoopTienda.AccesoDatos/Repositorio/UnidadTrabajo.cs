@@ -13,10 +13,12 @@ namespace CoopTienda.AccesoDatos.Repositorio
         private readonly ApplicationDbContext db;
 
         public IAlmacenRepositorio Almacen { get; private set; }
+        public ICategoriaRepositorio Categoria { get; private set; }
         public UnidadTrabajo(ApplicationDbContext db)
         {
             this.db = db;
             Almacen = new AlmacenRepositorio(db);
+            Categoria = new CategoriaRepositorio(db);
         }
 
         public void Dispose()

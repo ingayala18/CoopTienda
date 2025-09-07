@@ -1,6 +1,6 @@
-﻿@model Almacen
+﻿@model Categoria
 @{
-    ViewData["Title"] = "Nuevo Almacen";
+    ViewData["Title"] = "Nueva Categoria";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -9,20 +9,15 @@
         <div class="col-12 col-md-8 col-lg-6">
             <div class="card shadow-lg border-0">
                 <div class="card-header p-5 p-md-3 bg-secondary">
-                    <h2 class="text-center m-0">Nuevo Almacen</h2>
+                    <h2 class="text-center m-0">Nueva Categoria</h2>
                 </div>
                 <div class="card-body">
                     <form method="post">
                         <div asp-validation-summary="ModelOnly"></div>
                         <div class="form-floating mb-3">
-                            <input asp-for="Nombre" type="text" class="form-control" placeholder="Nombre de Almacen">
+                            <input asp-for="Nombre" type="text" class="form-control" placeholder="Nombre de Categoria">
                             <label asp-for="Nombre"></label>
                             <span asp-validation-for="Nombre" class="text-danger"></span>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input asp-for="Descripcion" type="text" class="form-control" placeholder="Descripcion">
-                            <label asp-for="Descripcion"></label>
-                            <span asp-validation-for="Descripcion" class="text-danger"></span>
                         </div>
                         <div class="form-floating mb-3">
                             <select asp-for="Estado" class="form-select">

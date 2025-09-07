@@ -36,7 +36,7 @@ namespace CoopTienda.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear(Almacen almacen)
         {
-            var existeNombre = await unidadTrabajo.Almacen.ObtenerPrimero(o => o.Nombre == almacen.Nombre);
+            var existeNombre = await unidadTrabajo.Almacen.ObtenerPrimero(o => o.Nombre.ToLower().Trim() == almacen.Nombre.ToLower().Trim());
             if (ModelState.IsValid)
             {
                 if (existeNombre != null)
@@ -70,6 +70,7 @@ namespace CoopTienda.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(Almacen almacen)
         {
             var almacenDesdeDb = await unidadTrabajo.Almacen.ObtenerPrimero(o => o.Id == almacen.Id);
+
             if (ModelState.IsValid)
             {
                 if (almacenDesdeDb is null)
@@ -77,15 +78,30 @@ namespace CoopTienda.Areas.Admin.Controllers
                     return NotFound();
                 }
 
+                // Verificar si ya existe un almacén con ese nombre (excepto el actual)
+                var existeAlmacen = await unidadTrabajo.Almacen.ObtenerPrimero(
+                    o => o.Nombre.ToLower().Trim() == almacen.Nombre.ToLower().Trim() && o.Id != almacen.Id
+                );
+
+                if (existeAlmacen != null)
+                {
+                    ModelState.AddModelError("Nombre", "Ya existe un almacén con este nombre");
+                    return View(almacen);
+                }
+
+                // Actualizar solo si pasa la validación
+                almacenDesdeDb.Nombre = almacen.Nombre; // Se permite cambiar si no está repetido
                 almacenDesdeDb.Estado = almacen.Estado;
                 almacenDesdeDb.Descripcion = almacen.Descripcion;
+
                 await unidadTrabajo.Almacen.Actualizar(almacenDesdeDb);
-                TempData[DS.Exitoso] = "Almacen actualizado exitosamente";
+                TempData[DS.Exitoso] = "Almacén actualizado exitosamente";
                 await unidadTrabajo.Guardar();
                 return RedirectToAction("Index", "Almacen");
             }
             return View(almacen);
         }
+
 
         #region API
         public async Task<IActionResult> ObtenerTodos()

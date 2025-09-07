@@ -12,6 +12,7 @@ namespace CoopTienda.AccesoDatos.Data
         {
         }
         public DbSet<Almacen> Almacen { get; set; }
+        public DbSet<Categoria> Categoria { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

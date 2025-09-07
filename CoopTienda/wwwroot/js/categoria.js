@@ -8,11 +8,10 @@ $(document).ready(() => {
 const CargarDataTable = () => {
     datatable = $("#tblDatos").DataTable({
         "ajax": {
-            "url": "/Admin/Almacen/ObtenerTodos"
+            "url": "/Admin/Categorias/ObtenerTodos"
         },
         "columns": [
             {"data": "nombre"},
-            {"data": "descripcion"},
             {
                 "data": "estado",
                 "render": function (data) {
@@ -27,10 +26,10 @@ const CargarDataTable = () => {
                 "data": "id",
                 "render": function (data) {
                     return `<div class="text-center d-flex flex-column gap-2 flex-md-row">
-                                <a href="/Admin/Almacen/Edit/${data}" class="btn btn-secondary btn-sm">
+                                <a href="/Admin/Categorias/Edit/${data}" class="btn btn-secondary btn-sm">
                                     <i class="fa-solid fa-pencil"></i>
                                 </a>
-                                <button onclick=Delete("/Admin/Almacen/Delete/${data}") class="btn btn-danger btn-sm">
+                                <button onclick=Delete("/Admin/Categorias/Delete/${data}") class="btn btn-danger btn-sm">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </div>`;
@@ -42,7 +41,7 @@ const CargarDataTable = () => {
 const Delete = (url) => {
 
     Swal.fire({
-        title: "¿Está seguro de eliminar el almacén?",
+        title: `¿Está seguro de eliminar la categoria?`,
         text: "Este cambio no se puede revertir.",
         icon: "warning",
         showCancelButton: true,

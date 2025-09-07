@@ -9,6 +9,7 @@ namespace CoopTienda.AccesoDatos.Repositorio.IRepositorio
     public interface IUnidadTrabajo : IDisposable
     {
         IAlmacenRepositorio Almacen { get; }
+        ICategoriaRepositorio Categoria { get; }
         Task Guardar();
     }
 }
