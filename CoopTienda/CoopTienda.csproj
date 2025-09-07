@@ -33,4 +33,8 @@
     <None Include="compilerconfig.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\imagenes\productos\" />
+  </ItemGroup>
+
 </Project>

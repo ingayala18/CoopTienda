@@ -39,7 +39,7 @@ namespace CoopTienda.Areas.Admin.Controllers
             var existeNombre = await unidadTrabajo.Almacen.ObtenerPrimero(o => o.Nombre.ToLower().Trim() == almacen.Nombre.ToLower().Trim());
             if (ModelState.IsValid)
             {
-                if (existeNombre != null)
+                if (existeNombre is not null)
                 {
                     ModelState.AddModelError("Nombre", "Ya existe un almacén con este nombre.");
                     return View(almacen);

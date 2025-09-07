@@ -1,0 +1,115 @@
+﻿@model ProductoVM
+@{
+    ViewData["Title"] = "Nuevo Producto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-12 col-lg-10">
+            <div class="card shadow-lg border-0">
+                <div class="card-header p-5 p-md-3 bg-secondary">
+                    <h2 class="text-center m-0">Nuevo Producto</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly"></div>
+                        <div class="row">
+                            <div class="col-12 col-sm-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Producto.Codigo" type="number" value="" class="form-control" placeholder="N&deg; Codigo">
+                                    <label asp-for="Producto.Codigo"></label>
+                                    <span asp-validation-for="Producto.Codigo" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Producto.Serial" type="text" class="form-control" placeholder="N&deg; Serial">
+                                    <label asp-for="Producto.Serial"></label>
+                                    <span asp-validation-for="Producto.Serial" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Producto.Nombre" type="text" class="form-control">
+                            <label asp-for="Producto.Nombre"></label>
+                            <span asp-validation-for="Producto.Nombre" class="text-danger"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-sm-6">
+                                <div class="form-floating mb-3">
+                                    <select asp-for="Producto.CategoriaId" asp-items="@Model.ListaCategorias" class="form-select">
+                                        <option selected disabled>Seleccione</option>
+                                    </select>
+                                    <label asp-for="Producto.Categoria.Nombre"></label>
+                                    <span asp-validation-for="Producto.CategoriaId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-floating mb-3">
+                                    <select asp-for="Producto.MarcaId" asp-items="@Model.ListaMarcas" class="form-select">
+                                        <option selected disabled>Seleccione</option>
+                                    </select>
+                                    <label asp-for="Producto.Marca.Nombre"></label>
+                                    <span asp-validation-for="Producto.MarcaId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-sm-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Producto.Costo" type="text" value="" class="form-control" placeholder="$0.00">
+                                    <label asp-for="Producto.Costo"></label>
+                                    <span asp-validation-for="Producto.Costo" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Producto.Precio" type="number" value="" class="form-control" placeholder="$0.00">
+                                    <label asp-for="Producto.Precio"></label>
+                                    <span asp-validation-for="Producto.Precio" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-sm-6">
+                                <div class="form-floating mb-3">
+                                    <input name="imagen" id="imagen" type="file" multiple class="form-control">
+                                    <label>Imagen</label>
+                                    <span asp-validation-for="Producto.ImagenUrl" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-floating mb-3">
+                                    <select asp-for="Producto.Estado" class="form-select">
+                                        <option selected disabled>Seleccione</option>
+                                        <option value="true">Activo</option>
+                                        <option value="false">Inactivo</option>
+                                    </select>
+                                    <label asp-for="Producto.Estado"></label>
+                                    <span asp-validation-for="Producto.Estado" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Producto.Descripcion" type="text" class="form-control">
+                            <label asp-for="Producto.Descripcion"></label>
+                            <span asp-validation-for="Producto.Descripcion" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="d-flex flex-column gap-3 flex-md-row">
+                            <button onclick="return validarImagen()" class="btn btn-primary" type="submit"> <i class="fa-regular fa-floppy-disk"></i> Guardar</button>
+                            <a asp-action="Index" class="btn btn-secondary"> <i class="fa-solid fa-arrow-left"></i> Volver</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial.cshtml" />
+    <script src="~/js/validarImagen.js"></script>
+}
+

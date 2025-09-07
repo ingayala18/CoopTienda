@@ -12,6 +12,7 @@ namespace CoopTienda.Modelo
         [Key]
         public int Id { get; set; }
         [Required(ErrorMessage = "El nombre es obligatorio")]
+        [Display(Name = "Marca")]
         public string Nombre { get; set; }
 
         [Required(ErrorMessage = "El estado es obligatorio")]
