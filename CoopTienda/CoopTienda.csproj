@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="compilerconfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.8" />
@@ -22,10 +26,11 @@
   <ItemGroup>
     <ProjectReference Include="..\CoopTienda.AccesoDatos\CoopTienda.AccesoDatos.csproj" />
     <ProjectReference Include="..\CoopTienda.Modelo\CoopTienda.Modelo.csproj" />
+    <ProjectReference Include="..\CoopTienda.Utilidades\CoopTienda.Utilidades.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Controllers\" />
+    <None Include="compilerconfig.json" />
   </ItemGroup>
 
 </Project>
