@@ -10,6 +10,7 @@ namespace CoopTienda.AccesoDatos.Repositorio.IRepositorio
     {
         IAlmacenRepositorio Almacen { get; }
         ICategoriaRepositorio Categoria { get; }
+        IMarcaRepositorio Marca { get; }
         Task Guardar();
     }
 }

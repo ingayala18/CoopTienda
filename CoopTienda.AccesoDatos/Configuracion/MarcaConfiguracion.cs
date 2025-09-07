@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace CoopTienda.AccesoDatos.Configuracion
 {
-    public class CategoriaConfiguracion : IEntityTypeConfiguration<Categoria>
+    public class MarcaConfiguracion : IEntityTypeConfiguration<Marca>
     {
-        public void Configure(EntityTypeBuilder<Categoria> builder)
+        public void Configure(EntityTypeBuilder<Marca> builder)
         {
             builder.HasKey(a => a.Id);
             builder.Property(x => x.Nombre).IsRequired(true);
