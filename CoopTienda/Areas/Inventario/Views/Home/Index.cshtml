@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Producto>
+﻿@model PagedList<Producto>
 @{
     ViewData["Title"] = "Inicio";
 }
@@ -7,9 +7,9 @@
 
     <div class="row mt-3">
         <div class="col-12 col-md-6">
-            <form method="post">
+            <form method="get">
                 <div class="input-group mb-3">
-                    <input type="text" name="buscar" class="form-control" placeholder="Buscar..." aria-label="Buscar" aria-describedby="button-addon2">
+                    <input type="text" value="@ViewData["BusquedaActual"]" name="busqueda" class="form-control" placeholder="Buscar..." aria-label="Buscar" aria-describedby="button-addon2">
                     <button class="btn btn-primary" type="submit" id="button-addon2">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
@@ -43,6 +43,24 @@
                 <p class="m-0">No hay registro para mostrar</p>
             </div>
         }
+    </div>
+
+    <div class="mt-5 text-center">
+        <a asp-action="Index" asp-route-pageNumber="@(1)" class="btn btn-primary @ViewData["Previo"]" asp-route-busquedaActual="@ViewData["BusquedaActual"]">
+            <i class="fa-solid fa-backward-step"></i>
+        </a>
+        <a asp-action="Index" asp-route-pageNumber="@((int)ViewData["PageNumber"] - 1)" class="btn btn-primary @ViewData["Previo"]" asp-route-busquedaActual="@ViewData["BusquedaActual"]">
+            Anterior
+        </a>
+        <span>Pagina @ViewData["PageNumber"] de @ViewData["TotalPaginas"]</span>
+
+        <a asp-action="Index" asp-route-pageNumber="@((int)ViewData["PageNumber"] + 1)" class="btn btn-primary @ViewData["Siguiente"]" asp-route-busquedaActual="@ViewData["BusquedaActual"]">
+            Siguiente
+        </a>
+
+        <a asp-action="Index" asp-route-pageNumber="@ViewData["TotalPaginas"]" class="btn btn-primary  @ViewData["Siguiente"]" asp-route-busquedaActual="@ViewData["BusquedaActual"]">
+            <i class="fa-solid fa-forward-step"></i>
+        </a>
     </div>
 </div>
 

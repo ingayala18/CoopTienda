@@ -1,5 +1,6 @@
 ﻿using CoopTienda.AccesoDatos.Data;
 using CoopTienda.AccesoDatos.Repositorio.IRepositorio;
+using CoopTienda.Modelo.Especificaciones;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,8 @@ namespace CoopTienda.AccesoDatos.Repositorio
         {
             return await dbSet.FindAsync(id);
         }
+
+
 
         public async Task<T> ObtenerPrimero(Expression<Func<T, bool>> filtro = null, string incluirPropiedades = null, bool isTracking = true)
         {
@@ -83,6 +86,36 @@ namespace CoopTienda.AccesoDatos.Repositorio
             }
 
             return await query.ToListAsync();
+        }
+
+        public PagedList<T> ObtenerPaginado(Parametros parametros, Expression<Func<T, bool>> filtro = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string incluirPropiedades = null, bool isTracking = true)
+        {
+            IQueryable<T> query = dbSet;
+
+            if (filtro is not null)
+            {
+                query = query.Where(filtro);
+            }
+
+            if (orderBy is not null)
+            {
+                query = orderBy(query);
+            }
+
+            if (incluirPropiedades is not null)
+            {
+                foreach (var item in incluirPropiedades.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(item);
+                }
+            }
+
+            if (!isTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return PagedList<T>.ToPagedList(query, parametros.PageNumber, parametros.PageSize);
         }
 
         public void Remover(T entidad)
