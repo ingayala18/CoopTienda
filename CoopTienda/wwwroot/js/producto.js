@@ -15,7 +15,19 @@ const CargarDataTable = () => {
             {"data": "nombre"},
             {"data": "categoria.nombre"},
             {"data": "marca.nombre"},
-            {"data": "costo"},
+            {
+                "data": "costo",
+                "render": function (data) {
+                    // Si el valor viene nulo o vacío, devuelve vacío
+                    if (data == null) return "";
+
+                    // Formato moneda en dólares (puedes cambiar "es-DO" y "USD")
+                    return new Intl.NumberFormat("es-DO", {
+                        style: "currency",
+                        currency: "DOP"
+                    }).format(data);
+                }
+            },
             {
                 "data": "estado",
                 "render": function (data) {
