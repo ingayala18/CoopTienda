@@ -1,4 +1,7 @@
 using System.Diagnostics;
+using System.Threading.Tasks;
+using CoopTienda.AccesoDatos.Repositorio.IRepositorio;
+using CoopTienda.Modelo;
 using CoopTienda.Modelo.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,21 +10,16 @@ namespace CoopTienda.Areas.Inventario.Controllers
     [Area("Inventario")]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IUnidadTrabajo unidadTrabajo;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IUnidadTrabajo unidadTrabajo)
         {
-            _logger = logger;
+            this.unidadTrabajo = unidadTrabajo;
         }
-
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
+            IEnumerable<Producto> listaProducto = await unidadTrabajo.Producto.ObtenerTodos(incluirPropiedades: "Categoria,Marca");
+            return View(listaProducto);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

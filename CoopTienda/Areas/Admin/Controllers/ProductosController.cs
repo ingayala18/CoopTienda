@@ -132,7 +132,7 @@ namespace CoopTienda.Areas.Admin.Controllers
             {
                 var productoDesdeDb = await unidadTrabajo.Producto.ObtenerPrimero(o => o.Id == productoVM.Producto.Id);
 
-                if (productoDesdeDb == null)
+                if (productoDesdeDb is null)
                 {
                     return NotFound();
                 }
@@ -143,6 +143,14 @@ namespace CoopTienda.Areas.Admin.Controllers
                 if (existeCodigo is not null)
                 {
                     ModelState.AddModelError("Producto.Codigo", "Ya existe un producto con este código");
+                }
+
+                var existeNombre = await unidadTrabajo.Producto.ObtenerPrimero(o => o.Nombre == productoVM.Producto.Nombre
+                 && o.Id != productoVM.Producto.Id);
+
+                if (existeNombre is not null)
+                {
+                    ModelState.AddModelError("Producto.Nombre", "Ya existe un producto con este nombre");
                 }
 
                 var existeSerial = await unidadTrabajo.Producto.ObtenerPrimero(o => o.Serial == productoVM.Producto.Serial
@@ -180,15 +188,12 @@ namespace CoopTienda.Areas.Admin.Controllers
                     var NombreArchivo = Guid.NewGuid().ToString();
                     var Subida = Path.Combine(RutaPrincipal, @"imagenes\productos");
                     var Extension = Path.GetExtension(Archivos[0].FileName);
+                    var rutaImagenAnterior = Path.Combine(RutaPrincipal, productoDesdeDb.ImagenUrl.TrimStart('/', '\\'));
 
                     // Borrar imagen anterior si existe
-                    if (!string.IsNullOrEmpty(productoDesdeDb.ImagenUrl))
+                    if (System.IO.File.Exists(rutaImagenAnterior))
                     {
-                        var rutaImagenAnterior = Path.Combine(RutaPrincipal, productoDesdeDb.ImagenUrl.TrimStart('\\'));
-                        if (System.IO.File.Exists(rutaImagenAnterior))
-                        {
-                            System.IO.File.Delete(rutaImagenAnterior);
-                        }
+                        System.IO.File.Delete(rutaImagenAnterior);
                     }
 
                     using (var fileStreams = new FileStream(Path.Combine(Subida, NombreArchivo + Extension), FileMode.Create))
@@ -196,7 +201,17 @@ namespace CoopTienda.Areas.Admin.Controllers
                         Archivos[0].CopyTo(fileStreams);
                     }
 
-                    productoDesdeDb.ImagenUrl = @"\imagenes\productos\" + NombreArchivo + Extension;
+                    productoDesdeDb.ImagenUrl = "/imagenes/productos/" + NombreArchivo + Extension;
+                    await unidadTrabajo.Producto.Actualizar(productoDesdeDb);
+                    await unidadTrabajo.Guardar();
+                    TempData[DS.Exitoso] = "Producto actualizado exitosamente";
+                    return RedirectToAction(nameof(Index));
+
+                }
+                else
+                {
+                    // Si no se sube nueva imagen, mantener la existente
+                    productoDesdeDb.ImagenUrl = productoDesdeDb.ImagenUrl;
                 }
                 await unidadTrabajo.Producto.Actualizar(productoDesdeDb);
                 await unidadTrabajo.Guardar();
@@ -221,13 +236,13 @@ namespace CoopTienda.Areas.Admin.Controllers
         public async Task<IActionResult> Delete (int? id)
         {
             var producto = await unidadTrabajo.Producto.ObtenerPrimero(o => o.Id == id);
-            if (producto is null)
+            if (producto is null || id == 0)
             {
                 return Json(new { success = false, message = "Error al borrar el producto" });
             }
             // Borrar imagen si existe
             var RutaPrincipal = webHostEnvironment.WebRootPath;
-            var rutaImagen = Path.Combine(RutaPrincipal, producto.ImagenUrl.TrimStart('\\'));
+            var rutaImagen = Path.Combine(RutaPrincipal, producto.ImagenUrl.TrimStart('/','\\'));
             if (System.IO.File.Exists(rutaImagen))
             {
                 System.IO.File.Delete(rutaImagen);

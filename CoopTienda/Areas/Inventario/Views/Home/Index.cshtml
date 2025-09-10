@@ -1,4 +1,34 @@
-﻿@{
+﻿@model IEnumerable<Producto>
+@{
     ViewData["Title"] = "Inicio";
 }
+
+<div class="container-lg">
+    <div class="row">
+        @if (Model.Count() > 0)
+        {
+            @foreach (var producto in Model)
+            {
+               <div class="col-6 col-sm-4 col-md-4 col-lg-3">
+                   <div class="card border-0 shadow-lg bg-white">
+                        <img src="@Url.Content(producto.ImagenUrl)" />
+                       <div class="card-body">
+                            <p class="m-0 fw-bold text-primary">@producto.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-DO"))</p>
+                            <p class="fw-bold">@producto.Descripcion</p>
+                            <a class="btn btn-primary w-100">
+                                <i class="fa-regular fa-eye"></i> Detalles
+                            </a>
+                       </div>
+                   </div>
+               </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-danger border-0">
+                <p class="m-0">No hay registro para mostrar</p>
+            </div>
+        }
+    </div>
+</div>
 

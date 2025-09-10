@@ -34,10 +34,7 @@ namespace CoopTienda.AccesoDatos.Repositorio
                 productoDb.Estado = producto.Estado;
                 productoDb.CategoriaId = producto.CategoriaId;
                 productoDb.MarcaId = producto.MarcaId;
-                if (producto.ImagenUrl is not null)
-                {
-                    productoDb.ImagenUrl = producto.ImagenUrl;
-                }
+                productoDb.ImagenUrl = producto.ImagenUrl;
             }
         }
 
