@@ -1,0 +1,38 @@
+﻿
+@{
+    ViewData["Title"] = "Lista de Usuarios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row justify-content-center mt-5 ">
+        <div class="col-12">
+            <div class="card shadow-lg bg-white p-4 border-0">
+                <div class="d-flex flex-column flex-md-row justify-content-md-between">
+                    <h2 class=" mb-4 mb-md-0">Lista de Usuarios</h2>
+                    <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary text-white"> <i class="fa fa-plus" aria-hidden="true"></i> Nuevo Usuario</a>
+                </div>
+                <div class="table-responsive mt-3">
+                    <table id="tblDatos" class="table table-striped table-hover w-100">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Telefono</th>
+                                <th>Role</th>
+                                <th>Accion</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/usuario.js"></script>
+}
+
