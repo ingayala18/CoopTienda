@@ -2,22 +2,26 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading;
-using System.Threading.Tasks;
+using CoopTienda.Modelo;
+using CoopTienda.Utilidades;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CoopTienda.Areas.Identity.Pages.Account
 {
@@ -29,13 +33,15 @@ namespace CoopTienda.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> roleManager;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -43,6 +49,7 @@ namespace CoopTienda.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            this.roleManager = roleManager;
         }
 
         /// <summary>
@@ -74,7 +81,7 @@ namespace CoopTienda.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
+            [Required(ErrorMessage = "El email es obligatorio")]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
@@ -83,7 +90,7 @@ namespace CoopTienda.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
+            [Required(ErrorMessage = "El password es obligatorio")]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
@@ -94,9 +101,36 @@ namespace CoopTienda.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
+            [Display(Name = "Confirmar password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required(ErrorMessage = "El nombre es obligatorio")]
+            public string Nombre { get; set; }
+
+            [Required(ErrorMessage = "El apellido es obligatorio")]
+            public string Apellido { get; set; }
+
+            [Required(ErrorMessage = "La cedula es obligatoria")]
+            public string Cedula { get; set; }
+
+            [Required(ErrorMessage = "La direccion es obligatoria")]
+            public string Direccion { get; set; }
+
+            [Required(ErrorMessage = "La ciudad es obligatoria")]
+            public string Ciudad { get; set; }
+
+            [Required(ErrorMessage = "El pais es obligatorio")]
+            public string Pais { get; set; }
+
+            [Required(ErrorMessage = "El telefono es obligatorio")]
+            [Display(Name = "Telefono")]
+            [DataType(DataType.PhoneNumber)]
+            public string PhoneNumber { get; set; }
+
+            [NotMapped]
+            public string Role { get; set; }
+            public IEnumerable<SelectListItem> ListaRol { get; set; }
         }
 
 
@@ -104,6 +138,21 @@ namespace CoopTienda.Areas.Identity.Pages.Account
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            Input = new InputModel()
+            {
+                ListaRol = roleManager.Roles.Where(o => o.Name != DS.Cliente).Select(o => o.Name).Select(o => new SelectListItem
+                {
+                    Text = o,
+                    Value = o
+                })
+            };
+
+            if (!await roleManager.RoleExistsAsync(DS.Admin))
+            {
+                await roleManager.CreateAsync(new IdentityRole(DS.Admin));
+                await roleManager.CreateAsync(new IdentityRole(DS.Cliente));
+                await roleManager.CreateAsync(new IdentityRole(DS.Inventario));
+            }
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -112,7 +161,19 @@ namespace CoopTienda.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                var user = new UsuarioAplicacion()
+                {
+                    UserName = Input.Email,
+                    Email = Input.Email,
+                    Nombre = Input.Nombre,
+                    Apellido = Input.Apellido,
+                    Cedula = Input.Cedula,
+                    Direccion = Input.Direccion,
+                    Ciudad = Input.Ciudad,
+                    Pais = Input.Pais,
+                    PhoneNumber = Input.PhoneNumber,
+                    Role = Input.Role
+                };
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -122,17 +183,28 @@ namespace CoopTienda.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
+                    
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    if (user.Role is null)
+                    {
+                        await _userManager.AddToRoleAsync(user, DS.Cliente);
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, user.Role);
+                    }
+
+                        var userId = await _userManager.GetUserIdAsync(user);
+                    //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    //var callbackUrl = Url.Page(
+                    //    "/Account/ConfirmEmail",
+                    //    pageHandler: null,
+                    //    values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+                    //    protocol: Request.Scheme);
+
+                    //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                    //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
@@ -140,15 +212,42 @@ namespace CoopTienda.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        if (user.Role is null)
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            return LocalRedirect(returnUrl);
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "Usuarios", new { Area = "Admin" });
+                        }
+
                     }
                 }
+
+                Input = new InputModel()
+                {
+                    ListaRol = roleManager.Roles.Where(o => o.Name != DS.Cliente).Select(o => o.Name).Select(o => new SelectListItem
+                    {
+                        Text = o,
+                        Value = o
+                    })
+                };
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
+
+            Input = new InputModel()
+            {
+                ListaRol = roleManager.Roles.Where(o => o.Name != DS.Cliente).Select(o => o.Name).Select(o => new SelectListItem
+                {
+                    Text = o,
+                    Value = o
+                })
+            };
 
             // If we got this far, something failed, redisplay form
             return Page();

@@ -10,5 +10,9 @@ namespace CoopTienda.Utilidades
     {
         public static string Exitoso = "Exitoso";
         public static string Error = "Error";
+
+        public static string Admin = "Administrador";
+        public static string Cliente = "Cliente";
+        public static string Inventario = "Inventario";
     }
 }
