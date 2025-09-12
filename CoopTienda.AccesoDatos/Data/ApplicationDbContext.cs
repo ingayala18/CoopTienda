@@ -15,6 +15,7 @@ namespace CoopTienda.AccesoDatos.Data
         public DbSet<Categoria> Categoria { get; set; }
         public DbSet<Marca> Marca { get; set; }
         public DbSet<Producto> Producto { get; set; }
+        public DbSet<UsuarioAplicacion> UsuarioAplicacion { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

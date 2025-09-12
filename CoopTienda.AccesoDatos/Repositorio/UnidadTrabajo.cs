@@ -16,6 +16,7 @@ namespace CoopTienda.AccesoDatos.Repositorio
         public ICategoriaRepositorio Categoria { get; private set; }
         public IMarcaRepositorio Marca { get; private set; }
         public IProductoRepositorio Producto { get; private set; }
+        public IUsuarioAplicacionRepositorio UsuarioAplicacion { get; private set; }
         public UnidadTrabajo(ApplicationDbContext db)
         {
             this.db = db;
@@ -23,6 +24,7 @@ namespace CoopTienda.AccesoDatos.Repositorio
             Categoria = new CategoriaRepositorio(db);
             Marca = new MarcaRepositorio(db);
             Producto = new ProductoRepositorio(db);
+            UsuarioAplicacion = new UsuarioAplicacionRepositorio(db);
         }
 
         public void Dispose()
